@@ -1,0 +1,82 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import QuizzesPage from './quizzesPage'; // Assume you have a page for Quizzes
+import ClassesPage from './classesPage'; // Assume you have a page for Classes
+
+const FacultyDashboard = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState('home');
+  const navigate = useNavigate();
+
+  // Function to render the main content based on menu selection
+  const renderContent = () => {
+    if (currentPage === 'quizzes') {
+      return <QuizzesPage />; // Render Quizzes page component
+    } else if (currentPage === 'classes') {
+      return <ClassesPage />; // Render Classes page component
+    } else {
+      return (
+        <div>
+          <h1 className="text-3xl font-bold text-blue-600">Welcome to the Faculty Dashboard</h1>
+          <p>Select a menu option to get started.</p>
+        </div>
+      );
+    }
+  };
+
+  // Function to handle logout
+  const handleLogout = () => {
+    localStorage.clear(); // Clear all local storage data
+    navigate("/faculty-login"); // Redirect to the login page
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      {/* Top Bar */}
+      <div className="bg-blue-600 flex items-center h-16 w-full">
+        <h1 className="text-3xl text-white flex justify-start ml-5">Quizy</h1>
+      </div>
+
+      {/* Main Content Area */}
+      <div className="flex flex-row w-full min-h-screen">
+        {/* Sidebar (Hamburger Menu) */}
+        <div className={`bg-blue-400 p-4 text-white ${isOpen ? 'w-64' : 'w-16'} transition-all`}>
+          <button className="focus:outline-none" onClick={() => setIsOpen(!isOpen)}>
+            {/* Hamburger icon */}
+            ☰
+          </button>
+          {isOpen && (
+            <div className="mt-4">
+              <button
+                className="block py-2 rounded-md hover:bg-blue-700 w-full"
+                onClick={() => setCurrentPage('quizzes')}
+              >
+                Quizzes
+              </button>
+              <button
+                className="block py-2 rounded-md hover:bg-blue-700 w-full"
+                onClick={() => setCurrentPage('classes')}
+              >
+                Classes
+              </button>
+              {/* Logout Button */}
+              <button
+                className="block py-2 rounded-md hover:bg-blue-700 mt-4 w-full"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Right Side Content */}
+        <div className="flex-1 p-8 bg-white">
+          {renderContent()}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default FacultyDashboard;
