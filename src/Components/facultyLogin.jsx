@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../assets/api";
 
 const FacultyLogin = () => {
-  const [email, setEmail] = useState("");
+  const [regId, setRegId] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -21,8 +21,8 @@ const FacultyLogin = () => {
     setLoading(true);
 
     try {
-      const response = await api.post("/auth/faculty/login", {
-        email,
+      const response = await api.post("/faculty/faculty-login", {
+        regId,
         password,
       });
 
@@ -58,14 +58,14 @@ const FacultyLogin = () => {
             {/* Email Field */}
             <div className="mb-4">
               <label className="block text-sm font-semibold text-blue-600 mb-2">
-                Email
+              RegId
               </label>
               <input
-                type="email"
+                type="text"
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your Registered Id"
+                value={regId}
+                onChange={(e) => setRegId(e.target.value)}
                 required
               />
             </div>
