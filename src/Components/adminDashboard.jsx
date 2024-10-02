@@ -43,10 +43,11 @@ const AdminDashboard = () => {
   };
 
   // Function to handle logout
-  const handleLogout = () => {
-    localStorage.clear(); // Clear all local storage data
-    navigate("/admin-login"); // Redirect to the login page
-  };
+const handleLogout = () => {
+  localStorage.removeItem('admin_token'); 
+  navigate("/admin-login"); 
+};
+
 
   return (
     <div className="flex flex-col min-h-screen">

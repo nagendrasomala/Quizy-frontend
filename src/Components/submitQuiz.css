@@ -1,0 +1,83 @@
+.quiz-completion-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f9f9f9;
+}
+
+.tick-animation {
+    width: 100px;
+    height: 100px;
+}
+
+.checkmark {
+    stroke-width: 2;
+    stroke: #4CAF50; /* Green color for the tick */
+    fill: none;
+    animation: draw 0.6s ease forwards, scale 0.6s ease forwards;
+}
+
+.circle {
+    stroke: #4CAF50;
+    stroke-width: 2;
+    fill: none;
+    animation: fill 0.4s ease forwards;
+}
+
+.check {
+    stroke: #4CAF50;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    animation: draw 0.4s ease forwards 0.4s;
+}
+
+@keyframes draw {
+    0% {
+        stroke-dasharray: 0 50;
+    }
+    100% {
+        stroke-dasharray: 50 0;
+    }
+}
+
+@keyframes fill {
+    0% {
+        r: 0;
+    }
+    100% {
+        r: 25;
+    }
+}
+
+@keyframes scale {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.completion-message {
+    font-size: 24px;
+    margin-top: 20px;
+}
+
+.go-to-dashboard-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.go-to-dashboard-button:hover {
+    background-color: #45a049;
+}

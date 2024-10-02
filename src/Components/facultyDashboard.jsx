@@ -40,11 +40,12 @@ const FacultyDashboard = () => {
     navigate('/faculty-dashboard', { state: { currentPage: 'quizzes', selectedClass: cls } });
   };
 
-  // Function to handle logout
-  const handleLogout = () => {
-    localStorage.clear(); // Clear all local storage data
-    navigate("/faculty-login"); // Redirect to the login page
-  };
+ // Function to handle logout
+const handleLogout = () => {
+  localStorage.removeItem('faculty_token'); 
+  navigate("/faculty-login"); 
+};
+
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -57,7 +58,7 @@ const FacultyDashboard = () => {
       <div className="flex flex-row w-full min-h-screen">
         {/* Sidebar (Hamburger Menu) */}
         <div className={`bg-blue-400 p-4 text-white ${isOpen ? 'w-64' : 'w-16'} transition-all`}>
-          <button className="focus:outline-none" onClick={() => setIsOpen(!isOpen)}>
+          <button className="focus:outline-none text-xl" onClick={() => setIsOpen(!isOpen)}>
             {/* Hamburger icon */}
             ☰
           </button>
@@ -74,6 +75,12 @@ const FacultyDashboard = () => {
                 onClick={() => navigate('/faculty-dashboard', { state: { currentPage: 'quizzes', selectedClass } })}
               >
                 My Quizzes
+              </button>
+              <button
+                className="block py-2 rounded-md hover:bg-blue-700 w-full"
+                onClick={() => window.open('https://question-paper-gen.vercel.app/', '_self')} 
+              >
+                Generate Qp
               </button>
               {/* Logout Button */}
               <button

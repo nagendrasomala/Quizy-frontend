@@ -34,7 +34,6 @@ const AdminLogin = () => {
         alert("Login error: " + response.data.message);
       }
     } catch (error) {
-      console.error("Login error:", error);
       alert("An error occurred. Please try again.");
     } finally {
       setLoading(false);

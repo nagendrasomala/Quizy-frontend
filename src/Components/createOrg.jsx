@@ -27,7 +27,6 @@ const CreateOrganization = () => {
       toast.success(response.data.message); // Show success toast
       setNewOrg({ name: '' }); // Reset form
     } catch (error) {
-        console.log(error)
       const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
       toast.error(errorMessage); // Show error toast
     }

@@ -38,19 +38,19 @@ const FacultyClassesPage = () => {
   return (
     <div className=''>
     <div className='flex flex-row justify-between items-center'>
-      <p className="text-3xl font-bold text-blue-600">My Classes</p>
+      <p className="text-3xl font-bold text-blue-600">Classes of Organization</p>
       <input
         type="text"
         placeholder="Search by class name or code"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="p-2 rounded-md w-4/12 bg-slate-100 shadow-md"
+        className="p-2 rounded-md w-4/12 bg-white shadow-sm border"
       />
       </div>
       <div className="flex flex-col  mt-3">
         {filteredClasses.map((cls) => (
           <div key={cls.id} className="border rounded-md shadow flex flex-row mb-3 items-center w-8/12">
-            <div className='flex flex-row  p-2 w-full w-10/12'> 
+            <div className='flex flex-row  p-2 items-center  w-10/12'> 
             <p className="text-xl font-bold">{cls.name}</p>
             <p className='ml-5' >Code: {cls.classId}</p>
             </div>

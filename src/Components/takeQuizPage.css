@@ -1,0 +1,35 @@
+.watermark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* Full width to allow for multiple columns */
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping to multiple rows */
+    justify-content: space-around; /* Space elements evenly */
+    align-content: space-between; /* Align columns with even spacing */
+  }
+  
+  .watermark-text {
+    transform: rotate(-45deg);
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: rgba(24, 24, 24, 0.2);
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none;
+    text-align: center;
+    opacity: 0.9;
+    flex: 1 0 20%; /* Adjust size to fit more items in a row */
+    margin: 1rem; /* Add some margin for spacing */
+  }
+  
+  .watermark-text:nth-child(odd) {
+    align-self: flex-start;
+  }
+  
+  .watermark-text:nth-child(even) {
+    align-self: flex-end;
+  }
+  
