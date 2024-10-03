@@ -6,6 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check'; 
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
 const ManageStudentsPage = () => {
   const location = useLocation();
@@ -130,6 +131,7 @@ const ManageStudentsPage = () => {
 
       {/* Main Content Area */}
       <div className="flex flex-row w-full min-h-screen">
+        
         {/* Sidebar */}
         <div className="flex-1 m-4  shadow-md overflow-scroll max-h-screen p-2">
           <h2 className="text-xl mb-2">Class Students</h2>
@@ -144,7 +146,7 @@ const ManageStudentsPage = () => {
             {filteredClassStudents.map((student) => (
               <div
                 key={student._id}
-                className="mb-2 w-full bg-slate-100 rounded-md shadow-sm p-2 flex justify-between items-center"
+                className="mb-2 w-full bg-white border rounded-md shadow-sm p-2 px-3 flex justify-between items-center"
               >
                 <div>
                   <p>Name: {student.name}</p>
@@ -155,7 +157,7 @@ const ManageStudentsPage = () => {
                     setDeleteStudentId(student._id);
                     setError(null);
                   }}
-                  className="text-red-600"
+                  className="text-red-600 hover:bg-red-300 h-full p-3 rounded-full"
                 >
                   <DeleteIcon />
                 </button>
@@ -193,7 +195,8 @@ const ManageStudentsPage = () => {
             </div>
           )}
         </div>
-
+        
+        <div className=' h-10 w-10  -ml-2  absolute top-1/2 left-1/2'><SwapHorizIcon className=' text-blue-500 text-6xl' /></div>
         {/* Organization Students */}
         <div className="flex-1 m-4 shadow-md overflow-scroll max-h-screen p-2">
           <h2 className="text-xl mb-2">Organization Students</h2>
@@ -208,7 +211,7 @@ const ManageStudentsPage = () => {
             {filteredOrgStudents.map((student) => (
               <div
                 key={student._id}
-                className="mb-2 w-full bg-slate-100 rounded-md shadow-sm p-2 flex justify-between items-center"
+                className="mb-2 w-full bg-white border rounded-md shadow-sm p-2 px-3 flex justify-between items-center"
               >
                 <div>
                   <p>Name: {student.name}</p>
@@ -219,7 +222,7 @@ const ManageStudentsPage = () => {
                 ) : (
                   <button
                     onClick={() => handleAddStudentToClass(student._id)}
-                    className="text-green-600 hover:bg-blue-400 h-full w-12"
+                    className="text-green-600 hover:bg-blue-200 h-full p-3 rounded-full"
                   >
                     <AddIcon />
                   </button>

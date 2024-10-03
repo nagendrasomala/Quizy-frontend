@@ -203,19 +203,18 @@ const ClassesPage = () => {
             {filteredClasses.map((cla) => (
               <div
                 key={cla._id}
-                onClick={() => handleNavigate(organizationId, cla._id)}
-                className="mb-2 w-6/12 h-auto bg-slate-100 rounded-md shadow-sm hover:bg-blue-300 p-2 cursor-pointer flex justify-between items-center"
+                className="mb-2 w-7/12 h-auto bg-white border rounded-md shadow-sm hover:bg-blue-300  cursor-pointer flex justify-between items-center"
               >
-                <div > {/* Add this function for navigation */}
+                <div className=' h-full w-11/12 p-3' onClick={() => handleNavigate(organizationId, cla._id)} > 
                   <p>Class Name: {cla.name}</p>
                   <p>Class ID: {cla.classId}</p>
                 </div>
                 <button
                   onClick={() => {
                     setDeleteClassId(cla._id);
-                    setError(null); // Clear any previous error
+                    setError(null); 
                   }}
-                  className="text-blue-600"
+                  className="text-blue-600  p-3  hover:bg-red-300 rounded-full h-full w-1/12 flex flex-col items-center"
                 >
                   <DeleteIcon />
                 </button>
