@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:7080/',
+    baseURL: 'https://quiz-app-backend-kzc3.onrender.com',
 });
 
 export const googleAuth = (code) => api.get(`/auth/google?code=${code}`);
