@@ -21,6 +21,14 @@ const ManageStudentsPage = () => {
   const [addedStudents, setAddedStudents] = useState([]); // New state to track added students
   const navigate = useNavigate();
 
+    useEffect(() => {
+      const token = localStorage.getItem('admin_token'); 
+      if (!token) {
+          toast.error("Session expired");
+          navigate('/', { replace: true });
+      }
+  }, [navigate]);
+
   // Fetch the class and organization students
   useEffect(() => {
     const fetchStudents = async () => {

@@ -13,6 +13,7 @@ const AdminDashboard = () => {
   const currentPage = location.state?.currentPage || 'home'; 
   const selectedOrganization = location.state?.selectedOrganization || null;
 
+
   // Effect to handle initial page state
   useEffect(() => {
     if (currentPage === 'organizations' && selectedOrganization) {

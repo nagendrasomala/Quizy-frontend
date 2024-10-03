@@ -49,7 +49,7 @@ const FacultyClassesPage = () => {
       </div>
       <div className="flex flex-col  mt-3">
         {filteredClasses.map((cls) => (
-          <div key={cls.id} className="border rounded-md shadow flex flex-row mb-3 items-center w-8/12">
+          <div key={cls.id} className="border rounded-md shadow flex flex-row mb-3 p-5 items-center w-8/12">
             <div className='flex flex-row  p-2 items-center  w-10/12'> 
             <p className="text-xl font-bold">{cls.name}</p>
             <p className='ml-5' >Code: {cls.classId}</p>

@@ -135,11 +135,28 @@ const QuizCreator = () => {
             accept=".xlsx, .xls"
             className="p-2 rounded-md bg-slate-100 shadow-md w-full"
           />
+          
           <h2 className="text-2xl font-bold text-gray-700 mt-6">Questions Preview</h2>
-          <pre className="bg-slate-100 p-4 rounded-md shadow-md overflow-x-auto w-full">{JSON.stringify(questions, null, 2)}</pre>
+
+          {/* Render questions in card format */}
+          <div className="grid grid-cols-1 gap-6">
+            {questions.map((q, index) => (
+              <div key={index} className="bg-gray-100 p-4 rounded-md shadow-md">
+                <h3 className="font-bold text-lg text-blue-600">Question {index + 1}: {q.question}</h3>
+                <ul className="mt-2">
+                  <li className="mt-1"><strong>1. </strong>{q.opt1}</li>
+                  <li className="mt-1"><strong>2. </strong>{q.opt2}</li>
+                  <li className="mt-1"><strong>3. </strong>{q.opt3}</li>
+                  <li className="mt-1"><strong>4. </strong>{q.opt4}</li>
+                </ul>
+                <p className="mt-2 text-green-600"><strong>Correct Answer: </strong>{q.correctAnswer}</p>
+              </div>
+            ))}
+          </div>
+
           <button
             onClick={handleQuizCreation}
-            className="bg-blue-500 text-white p-3 rounded-md w-full hover:bg-blue-600"
+            className="bg-blue-500 text-white p-3 rounded-md w-full hover:bg-blue-600 mt-6"
           >
             Create Quiz
           </button>

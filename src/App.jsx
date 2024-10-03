@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import './App.css'
 import StartPage from './Components/startingPage'
@@ -21,46 +20,50 @@ import StudentClassesPage from './Components/studentClasses';
 import StudentClassQuizListPage from './Components/studentQuizzesPage';
 import QuizPage from './Components/takeQuizPage';
 import QuizCompletion from './Components/submitPage';
+import ParticipantsPage from './Components/quizParticipants';
+import { AdminPrivateRoute, FacultyPrivateRoute, StudentPrivateRoute,PublicRoute } from "./Components/privateRouting";
 
+//import { AdminPrivateRoute, FacultyPrivateRoute, StudentPrivateRoute, PublicRoute } from './privateRouting';
 
 
 
 function App() {
-  
   return (
-    <>
     <Router>
       <div className="min-h-screen bg-blue-100">
         <Routes>
           {/* Home Route */}
           <Route path="/" element={<StartPage />} />
-          <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path='/admin-dashboard' element={<AdminDashboard/>}/>
-          
-          <Route path="/organizations" element={<OrganizationPage />} />
-          <Route path="/create-organizations" element={<CreateOrganization />} />
-          <Route path="/classes" element={<ClassesPage />} />
-          <Route path='/manage-students' element={<ManageStudentsPage/>}/>
-          <Route path="/faculty-login" element={<FacultyLogin />} />
-          <Route path='/faculty-dashboard' element={<FacultyDashboard/>}/>
-          <Route path='/faculty-classes' element={<FacultyClassesPage/>}/>
-          <Route path='/faculty-quizes' element={<QuizListPage/>}/>
-          <Route path='/create-quizes' element={<QuizCreator/>}/>
 
-          <Route path="/student-login" element={<StudentLogin />} />
-          <Route path="/student-dashboard" element={<StudentDashboard />} />
-          <Route path="/student-organizations" element={<SOrganizationsPage />} />
-          <Route path="/student-quizzes" element={<SQuizListPage />} />
-          <Route path="/student-classes" element={<StudentClassesPage />} />
-          <Route path="/student-classes-quiz" element={<StudentClassQuizListPage />} />
-          <Route path="/student-take-quiz" element={<QuizPage />} />
-          <Route path="/quiz-completion" element={<QuizCompletion/>} />
+          {/* Admin Routes */}
+          <Route path="/admin-login" element={<PublicRoute role="admin"><AdminLogin /></PublicRoute>} />
+          <Route path='/admin-dashboard' element={<AdminPrivateRoute><AdminDashboard /></AdminPrivateRoute>} />
+          <Route path="/organizations" element={<AdminPrivateRoute><OrganizationPage /></AdminPrivateRoute>} />
+          <Route path="/create-organizations" element={<AdminPrivateRoute><CreateOrganization /></AdminPrivateRoute>} />
+          <Route path="/classes" element={<AdminPrivateRoute><ClassesPage /></AdminPrivateRoute>} />
+          <Route path='/manage-students' element={<AdminPrivateRoute><ManageStudentsPage /></AdminPrivateRoute>} />
+
+          {/* Faculty Routes */}
+          <Route path="/faculty-login" element={<PublicRoute role="faculty"><FacultyLogin /></PublicRoute>} />
+          <Route path='/faculty-dashboard' element={<FacultyPrivateRoute><FacultyDashboard /></FacultyPrivateRoute>} />
+          <Route path='/faculty-classes' element={<FacultyPrivateRoute><FacultyClassesPage /></FacultyPrivateRoute>} />
+          <Route path='/faculty-quizes' element={<FacultyPrivateRoute><QuizListPage /></FacultyPrivateRoute>} />
+          <Route path='/create-quizes' element={<FacultyPrivateRoute><QuizCreator /></FacultyPrivateRoute>} />
+
+          {/* Student Routes */}
+          <Route path="/student-login" element={<PublicRoute role="student"><StudentLogin /></PublicRoute>} />
+          <Route path="/student-dashboard" element={<StudentPrivateRoute><StudentDashboard /></StudentPrivateRoute>} />
+          <Route path="/student-organizations" element={<StudentPrivateRoute><SOrganizationsPage /></StudentPrivateRoute>} />
+          <Route path="/student-quizzes" element={<StudentPrivateRoute><SQuizListPage /></StudentPrivateRoute>} />
+          <Route path="/student-classes" element={<StudentPrivateRoute><StudentClassesPage /></StudentPrivateRoute>} />
+          <Route path="/student-classes-quiz" element={<StudentPrivateRoute><StudentClassQuizListPage /></StudentPrivateRoute>} />
+          <Route path="/student-take-quiz" element={<StudentPrivateRoute><QuizPage /></StudentPrivateRoute>} />
+          <Route path="/quiz-completion" element={<StudentPrivateRoute><QuizCompletion /></StudentPrivateRoute>} />
+          <Route path="/quiz-participants" element={<FacultyPrivateRoute><ParticipantsPage /></FacultyPrivateRoute>} />
         </Routes>
       </div>
     </Router>
-      
-    </>
-  )
+  );
 }
 
-export default App
+export default App;
