@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import api from '../assets/api';
 import { useNavigate, useLocation } from 'react-router-dom';
-import DeleteIcon from '@mui/icons-material/Delete'; 
-import { Button, Input } from '@mui/material'; 
-import { toast, ToastContainer } from 'react-toastify'; // Import Toastify components
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Button, Input } from '@mui/material';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CircularProgress from '@mui/material/CircularProgress'; // Import MUI CircularProgress for loader
 
 const ClassesPage = () => {
   const location = useLocation();
@@ -20,21 +21,18 @@ const ClassesPage = () => {
   const [deleteConfirmationText, setDeleteConfirmationText] = useState('');
   const navigate = useNavigate();
 
-  // Extract current page and selected organization from URL state
   const currentPage = location.state?.currentPage || 'home';
   const selectedOrganization = location.state?.selectedOrganization || null;
 
-  // Effect to handle initial page state
   useEffect(() => {
     if (currentPage === 'organizations' && selectedOrganization) {
       navigate('/admin-dashboard', { state: { currentPage: 'classes', selectedOrganization } });
     }
   }, [currentPage, selectedOrganization, navigate]);
 
-  // Function to handle logout
   const handleLogout = () => {
-    localStorage.clear(); 
-    navigate("/admin-login"); 
+    localStorage.clear();
+    navigate("/admin-login");
   };
 
   useEffect(() => {
@@ -48,11 +46,9 @@ const ClassesPage = () => {
           },
         });
 
-        
-        setClasses(response.data.classes || []); // Use fallback to avoid errors
+        setClasses(response.data.classes || []);
         setLoading(false);
       } catch (error) {
-        
         toast.error(error.response?.data?.message || 'Failed to fetch classes. Please try again later.');
         setLoading(false);
       }
@@ -105,9 +101,9 @@ const ClassesPage = () => {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('admin_token')}`,
         },
-        data: { organizationId: organizationId, classId:classId },
+        data: { organizationId: organizationId, classId: classId },
       });
-      toast.success("Deleted successfully..!")
+      toast.success("Deleted successfully..!");
       setClasses((prevClasses) => prevClasses.filter(cls => cls._id !== classId));
       setDeleteClassId(null);
       setDeleteConfirmationText('');
@@ -117,12 +113,17 @@ const ClassesPage = () => {
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
   const handleNavigate = (organizationId, classId) => {
     navigate('/manage-students', { state: { organizationId, classId } });
   };
+
+  if (loading) {
+    return (
+      <div className='flex h-screen w-full justify-center items-center'>
+        <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -152,7 +153,6 @@ const ClassesPage = () => {
               >
                 Create Organization
               </button>
-              {/* Logout Button */}
               <button
                 className="block py-2 rounded-md hover:bg-blue-700 mt-4 w-full"
                 onClick={handleLogout}
@@ -163,7 +163,7 @@ const ClassesPage = () => {
           )}
         </div>
         <div className='flex flex-col m-2 w-full'>
-          <div className='flex flex-row justify-between w-full '>
+          <div className='flex flex-row justify-between w-full'>
             <h1 className=" text-black text-2xl">Classes for Organization: {organizationName || organizationId}</h1>
             <input
               type="text"
@@ -175,7 +175,7 @@ const ClassesPage = () => {
             {error && <div className="text-red-500">{error}</div>}
             <div className='flex flex-row'>
               <div className="flex justify-between mb-4">
-                <button 
+                <button
                   className="bg-blue-500 text-white p-2 rounded"
                   onClick={() => setShowForm((prev) => !prev)}
                 >
@@ -203,18 +203,18 @@ const ClassesPage = () => {
             {filteredClasses.map((cla) => (
               <div
                 key={cla._id}
-                className="mb-2 w-7/12 h-auto bg-white border rounded-md shadow-sm hover:bg-blue-300  cursor-pointer flex justify-between items-center"
+                className="mb-2 w-7/12 h-auto bg-white border rounded-md shadow-sm hover:bg-blue-300 cursor-pointer flex justify-between items-center"
               >
-                <div className=' h-full w-11/12 p-3' onClick={() => handleNavigate(organizationId, cla._id)} > 
+                <div className='h-full w-11/12 p-3' onClick={() => handleNavigate(organizationId, cla._id)}>
                   <p>Class Name: {cla.name}</p>
                   <p>Class ID: {cla.classId}</p>
                 </div>
                 <button
                   onClick={() => {
                     setDeleteClassId(cla._id);
-                    setError(null); 
+                    setError(null);
                   }}
-                  className="text-blue-600  p-3  hover:bg-red-300 rounded-full h-full w-1/12 flex flex-col items-center"
+                  className="text-blue-600 p-3 hover:bg-red-300 rounded-full h-full w-1/12 flex flex-col items-center"
                 >
                   <DeleteIcon />
                 </button>
@@ -234,16 +234,16 @@ const ClassesPage = () => {
                   className="border rounded p-2 w-full"
                 />
                 {error && <div className="text-red-500">{error}</div>}
-                <div className="flex justify-between mt-4">
+                <div className="flex justify-end mt-4">
                   <button
-                    onClick={() => setDeleteClassId(null)} // Close modal without deleting
-                    className="bg-gray-300 p-2 rounded"
+                    onClick={() => setDeleteClassId(null)}
+                    className="bg-gray-300 text-black py-2 px-4 rounded mr-2"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => handleDeleteClass(deleteClassId)}
-                    className="bg-red-500 text-white p-2 rounded"
+                    className="bg-red-500 text-white py-2 px-4 rounded"
                   >
                     Delete
                   </button>
@@ -253,7 +253,8 @@ const ClassesPage = () => {
           )}
         </div>
       </div>
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+
+      <ToastContainer position="top-center" />
     </div>
   );
 };

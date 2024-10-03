@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../assets/api";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const StudentLogin = () => {
   const [regNo, setRegNo] = useState(""); 
@@ -91,7 +92,9 @@ const StudentLogin = () => {
               className={`w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
               disabled={loading}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? <div className='flex h-screen w-full justify-center items-center'>
+              <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
+            </div> : "Login"}
             </button>
           </form>
         </div>

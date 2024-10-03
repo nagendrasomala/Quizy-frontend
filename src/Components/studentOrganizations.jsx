@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import api from '../assets/api'; // Ensure this path is correct
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
+import CircularProgress from '@mui/material/CircularProgress';
 
 const SOrganizationsPage = () => {
   const [organization, setOrganization] = useState(null); // Initialize as null for a single organization
@@ -47,7 +48,9 @@ const SOrganizationsPage = () => {
       <h1 className="text-2xl font-bold">My Organization</h1>
 
       {loading ? (
-        <p>Loading organization...</p>
+        <div className='flex h-screen w-full justify-center items-center'>
+          <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
+        </div>
       ) : organization ? ( 
         <div
           className="mb-3 px-3 mt-5 flex border flex-row w-6/12 h-12 bg-white rounded-md shadow-md hover:bg-blue-300 cursor-pointer justify-between items-center"

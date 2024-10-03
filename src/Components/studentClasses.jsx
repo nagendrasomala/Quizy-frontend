@@ -4,12 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material'; 
 import { toast, ToastContainer } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const StudentClassesPage = () => {
   const [search, setSearch] = useState('');
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false); // Sidebar open state
+  const [isButtonLoading, setIsButtonLoading] = useState(false); // Loading state for button clicks
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,12 +39,23 @@ const StudentClassesPage = () => {
     cls.classId.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleNavigate = (classId) => {
-    navigate('/student-classes-quiz', { state: { classId } });
+  const handleNavigate = async (classId) => {
+    setIsButtonLoading(true); // Start button loading
+    try {
+      navigate('/student-classes-quiz', { state: { classId } });
+    } catch (error) {
+      toast.error('Failed to navigate to quiz page.');
+    } finally {
+      setIsButtonLoading(false); // End button loading
+    }
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className='flex h-screen w-full justify-center items-center'>
+        <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
+      </div>
+    );
   }
 
   return (
@@ -60,8 +73,6 @@ const StudentClassesPage = () => {
           </button>
           {isOpen && (
             <div className="mt-4">
-              
-              
               <button
                 className="block py-2 rounded-md hover:bg-blue-700 w-full"
                 onClick={() => navigate('/student-logout')}
@@ -74,7 +85,7 @@ const StudentClassesPage = () => {
 
         {/* Main Content Area */}
         <div className="flex flex-col m-2 w-full">
-          <div className='flex flex-row justify-between w-full'>
+          <div className="flex flex-row justify-between w-full">
             <h1 className="text-black text-2xl">My Classes</h1>
             <input
               type="text"
@@ -99,6 +110,11 @@ const StudentClassesPage = () => {
               </div>
             ))}
           </ul>
+          {isButtonLoading && (
+            <div className='flex h-screen w-full justify-center items-center'>
+            <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
+          </div>
+          )}
         </div>
       </div>
 

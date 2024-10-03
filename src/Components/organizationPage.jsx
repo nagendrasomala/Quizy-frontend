@@ -7,6 +7,7 @@ import { toast, ToastContainer } from 'react-toastify'; // Import Toastify compo
 import 'react-toastify/dist/ReactToastify.css';
 import { FaUserGraduate } from "react-icons/fa";
 import { FaGraduationCap } from "react-icons/fa";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const OrganizationPage = () => {
   const [search, setSearch] = useState('');
@@ -113,7 +114,11 @@ const OrganizationPage = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className='flex h-screen w-full justify-center items-center'>
+        <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
+      </div>
+    );
   }
 
   if (error) {

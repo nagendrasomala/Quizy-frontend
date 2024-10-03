@@ -4,6 +4,7 @@ import api from '../assets/api'; // Adjust the import path as necessary
 import { toast, ToastContainer } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const StudentClassQuizListPage = () => {
   const [quizzes, setQuizzes] = useState([]);
@@ -12,7 +13,6 @@ const StudentClassQuizListPage = () => {
   const [searchQuery, setSearchQuery] = useState(''); 
   const [isOpen, setIsOpen] = useState(false); 
   const [sortOrder, setSortOrder] = useState('asc'); 
-  const [quizStatusMap, setQuizStatusMap] = useState({}); // Map to track quiz taken status
   const location = useLocation();
   const navigate = useNavigate();
   const classId = location.state?.classId;
@@ -47,21 +47,6 @@ const StudentClassQuizListPage = () => {
 
     fetchQuizzes();
   }, [classId]);
-
-  useEffect(() => {
-    const checkQuizzesTakenStatus = async () => {
-      const statusMap = {};
-      for (const quiz of quizzes) {
-        const hasTaken = await checkQuizTakenStatus(quiz._id);
-        statusMap[quiz._id] = hasTaken;
-      }
-      setQuizStatusMap(statusMap);
-    };
-
-    if (quizzes.length > 0) {
-      checkQuizzesTakenStatus();
-    }
-  }, [quizzes]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -106,17 +91,12 @@ const StudentClassQuizListPage = () => {
       }
     }
   };
-
-  const handleTakeQuiz = (quizId, studentId) => {
-    navigate("/student-take-quiz", {
-      state: {
-        quizId: quizId,
-        studentId: studentId,
-      },
-    });
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/student-login");
   };
 
-  const checkQuizTakenStatus = async (quizId) => {
+  const handleTakeQuiz = async (quizId, studentId) => {
     try {
       const response = await api.post(
         '/quiz/check-quiz-submission', 
@@ -129,9 +109,17 @@ const StudentClassQuizListPage = () => {
         }
       );
 
-      return response.status === 200; 
+      if (response.status === 200) {
+        navigate("/student-take-quiz", {
+          state: {
+            quizId: quizId,
+            studentId: studentId,
+          },
+        });
+      }
     } catch (error) {
-      return false; 
+      console.log()
+      toast.info('Quiz has already been taken.');
     }
   };
 
@@ -152,8 +140,13 @@ const StudentClassQuizListPage = () => {
   );
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className='flex h-screen w-full justify-center items-center'>
+        <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
+      </div>
+    );
   }
+  
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -172,7 +165,7 @@ const StudentClassQuizListPage = () => {
             <div className="mt-4">
               <button
                 className="block py-2 rounded-md hover:bg-blue-700 w-full"
-                onClick={() => navigate('/student-login')}
+                onClick={handleLogout}
               >
                 Logout
               </button>
@@ -207,7 +200,6 @@ const StudentClassQuizListPage = () => {
               <ul>
                 {filteredQuizzes.map((quiz) => {
                   const { status, color } = getQuizStatus(quiz.scheduledDate, quiz.startTime, quiz.endTime);
-                  const hasTaken = quizStatusMap[quiz._id]; // Get the taken status from the state
 
                   return (
                     <div key={quiz._id} className="mt-3 mb-2 w-7/12 h-auto flex flex-row bg-white border rounded-md shadow-md px-2 hover:bg-blue-300 cursor-pointer">
@@ -225,20 +217,15 @@ const StudentClassQuizListPage = () => {
                       </div>
                       <div className="flex flex-col w-2/12 h-auto p-2 justify-between items-center">
                         <button
-                          onClick={() => (status === 'Active' ? handleTakeQuiz(quiz._id) : null)}
-                          className={`bg-blue-500 text-white px-4 py-2 rounded-md ${status !== 'Active'|| hasTaken ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          disabled={status !== 'Active'||hasTaken}
+                          onClick={() => handleTakeQuiz(quiz._id)}
+                          className={`bg-blue-500 text-white px-4 py-2 rounded-md ${status !== 'Active' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          disabled={status !== 'Active'}
                         >
-                          {hasTaken ? 'Completed' : 'Take Quiz'}
+                          Take Quiz
                         </button>
                         <p className={color}>
-                            {!hasTaken && (
-                                <>
-                                <AccessTimeIcon style={{ fontSize: '17px' }} className="text-xs" />
-                                {status}
-                                </>
-                            )}
-                            </p>
+                          <AccessTimeIcon/> {status}
+                        </p>
                       </div>
                     </div>
                   );
@@ -246,9 +233,9 @@ const StudentClassQuizListPage = () => {
               </ul>
             )}
           </div>
-          <ToastContainer />
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

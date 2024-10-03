@@ -6,6 +6,7 @@ import './takeQuizPage.css';
 import api from '../assets/api';
 import { Toaster, toast } from 'react-hot-toast';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const QuizPage = () => {
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -27,6 +28,37 @@ const QuizPage = () => {
   const studentToken = localStorage.getItem("student_token");
   const userName = studentData.name;
   const regNo = studentData.regNo;
+
+
+  useEffect(() => {
+    const disableRightClick = (e) => {
+      e.preventDefault();
+    };
+
+    const disableKeyActions = (e) => {
+      // Block Ctrl+C, Ctrl+V, F12, and Developer Tools shortcuts
+      if (
+        (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'u')) || // Ctrl+C, Ctrl+V, Ctrl+U
+        e.key === 'F12' || // F12 for Dev Tools
+        (e.ctrlKey && e.shiftKey && e.key === 'I') || // Ctrl+Shift+I for Dev Tools
+        (e.ctrlKey && e.shiftKey && e.key === 'J') || // Ctrl+Shift+J for Console
+        (e.ctrlKey && e.shiftKey && e.key === 'C')    // Ctrl+Shift+C for Inspect
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        alert('This action is disabled during the quiz.');
+      }
+    };
+
+    document.addEventListener('contextmenu', disableRightClick);
+    document.addEventListener('keydown', disableKeyActions);
+
+    return () => {
+      document.removeEventListener('contextmenu', disableRightClick);
+      document.removeEventListener('keydown', disableKeyActions);
+    };
+    }, []);
+
 
   const fetchQuizData = async () => {
     try {
@@ -80,6 +112,10 @@ const QuizPage = () => {
   useEffect(() => {
     fetchQuizData();
     handleFullScreenPrompt();
+    const storedAnswers = localStorage.getItem(`quizAnswers_${quizId}`);
+    if (storedAnswers) {
+      setUserAnswers(JSON.parse(storedAnswers)); // Restore saved answers
+    }
     document.addEventListener('fullscreenchange', handleFullScreenExit);
     document.addEventListener('visibilitychange', handleTabSwitch);
     return () => {
@@ -91,7 +127,7 @@ const QuizPage = () => {
 
   const handleFullScreenPrompt = () => {
     if (!document.fullscreenElement) {
-
+      
     }
   };
 
@@ -114,7 +150,7 @@ const QuizPage = () => {
   const handleTabSwitch = () => {
     if (document.visibilityState === 'hidden') {
       setTabSwitchCount((prevCount) => prevCount + 1);
-      toast.warn('You switched tabs! Be careful, the quiz may auto-submit.');
+      toast.error('You switched tabs! Be careful, the quiz may auto-submit.');
     }
   };
 
@@ -324,7 +360,9 @@ const QuizPage = () => {
                 </div>
               </>
             ) : (
-              <p>Loading question...</p>
+              <div className='flex h-screen w-full justify-center items-center'>
+                <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
+              </div>
             )}
           </div>
         </div>
