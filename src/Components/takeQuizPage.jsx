@@ -113,7 +113,7 @@ const QuizPage = () => {
 
   const handleTabSwitch = () => {
     if (document.visibilityState === 'hidden') {
-      //setTabSwitchCount((prevCount) => prevCount + 1);
+      setTabSwitchCount((prevCount) => prevCount + 1);
       toast.warn('You switched tabs! Be careful, the quiz may auto-submit.');
     }
   };
