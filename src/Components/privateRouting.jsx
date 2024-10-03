@@ -38,7 +38,7 @@ const FacultyPrivateRoute = ({ children }) => {
       return;
     }
 
-    axios.post('http://localhost:7080/token/test-faculty', {}, {
+    axios.post('https://quiz-app-backend-kzc3.onrender.com/token/test-faculty', {}, {
       headers: { Authorization: `Bearer ${faculty_token}` }
     })
       .then(() => setIsAuthenticated(true))
@@ -63,7 +63,7 @@ const StudentPrivateRoute = ({ children }) => {
       return;
     }
 
-    axios.post('http://localhost:7080/token/test-student', {}, {
+    axios.post('https://quiz-app-backend-kzc3.onrender.com/token/test-student', {}, {
       headers: { Authorization: `Bearer ${student_token}` }
     })
       .then(() => setIsAuthenticated(true))
@@ -106,7 +106,7 @@ const PublicRoute = ({ children, role }) => {
       return;
     }
 
-    axios.post(`http://localhost:7080/token/test-${role}`, {}, {
+    axios.post(`https://quiz-app-backend-kzc3.onrender.com/token/test-${role}`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(() => setIsAuthenticated(true))
