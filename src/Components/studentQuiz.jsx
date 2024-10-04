@@ -7,7 +7,6 @@ const SQuizListPage = ({ organizationId, studentId }) => {
   const [quizzes, setQuizzes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
-  const [totalMarks,setTotalMarks] = useState(0);
 
   // Fetch quizzes for the student based on organizationId and studentId
   useEffect(() => {
@@ -19,7 +18,6 @@ const SQuizListPage = ({ organizationId, studentId }) => {
         });
 
         setQuizzes(response.data.quizzes);
-        setTotalMarks(response.data.quizzes.questions.length);
       } catch (error) {
         console.error('Error fetching quizzes:', error);
         toast.error('Error fetching quizzes');
@@ -80,7 +78,7 @@ const SQuizListPage = ({ organizationId, studentId }) => {
           sortedQuizzes.map((quiz) => (
             <div
               key={quiz.quizId}
-              className="border rounded-md shadow flex flex-row mb-3 items-center w-9/12 p-2"
+              className="border rounded-md shadow flex flex-col lg:flex-row mb-3 items-center w-full lg:w-9/12 p-2"
             >
               <div className="flex flex-col w-10/12">
                 <div className="flex flex-row p-2 w-10/12 items-center">
@@ -90,7 +88,7 @@ const SQuizListPage = ({ organizationId, studentId }) => {
                 <div className="flex flex-row p-2 w-10/12 items-center">
                   <p>Faculty: {quiz.facultyName}</p>
                   <p className="ml-5">Class: {quiz.className}</p>
-                  <p className="ml-5">Marks: {quiz.score}/{totalMarks}</p>
+                  <p className="ml-5">Marks: {quiz.score}/{quiz.totalMarks}</p>
                 </div>
               </div>
             </div>

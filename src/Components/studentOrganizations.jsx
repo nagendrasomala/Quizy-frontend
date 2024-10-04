@@ -49,7 +49,7 @@ const SOrganizationsPage = () => {
 
       {loading ? (
         <div className='flex h-screen w-full justify-center items-center'>
-          <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
+          <CircularProgress /> {/* Show loader while data is loading */}
         </div>
       ) : organization ? ( 
         <div

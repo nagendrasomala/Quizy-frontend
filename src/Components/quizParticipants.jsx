@@ -11,6 +11,7 @@ const ParticipantsPage = () => {
     const [quizName, setQuizName] = useState('');
     const [sortOrder, setSortOrder] = useState('asc');
     const [isOpen, setIsOpen] = useState(false);
+    
 
     // Get quizId from location.state
     const quizId = location.state?.quizId;
@@ -159,7 +160,7 @@ const ParticipantsPage = () => {
                                 <tr key={participant.regNo}>
                                     <td className="py-2 px-4 border-b text-center">{participant.regNo}</td>
                                     <td className="py-2 px-4 border-b text-center">{participant.studentName}</td>
-                                    <td className="py-2 px-4 border-b text-center">{participant.score}</td>
+                                    <td className="py-2 px-4 border-b text-center">{participant.score}/{participant.totalMarks}</td>
                                 </tr>
                             ))}
                         </tbody>
