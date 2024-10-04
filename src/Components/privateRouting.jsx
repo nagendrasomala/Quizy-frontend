@@ -13,7 +13,7 @@ const AdminPrivateRoute = ({ children }) => {
       return;
     }
 
-    axios.post('http://localhost:7080/token/test-admin', {}, {
+    axios.post('https://quiz-app-backend-kzc3.onrender.com/token/test-admin', {}, {
       headers: { Authorization: `Bearer ${admin_token}` }
     })
       .then(() => setIsAuthenticated(true))
