@@ -6,7 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 const SQuizListPage = ({ organizationId, studentId }) => {
   const [quizzes, setQuizzes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortOrder, setSortOrder] = useState('asc'); // To manage sorting order
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [totalMarks,setTotalMarks] = useState(0);
 
   // Fetch quizzes for the student based on organizationId and studentId
   useEffect(() => {
@@ -18,6 +19,7 @@ const SQuizListPage = ({ organizationId, studentId }) => {
         });
 
         setQuizzes(response.data.quizzes);
+        setTotalMarks(response.data.quizzes.questions.length);
       } catch (error) {
         console.error('Error fetching quizzes:', error);
         toast.error('Error fetching quizzes');
@@ -88,7 +90,7 @@ const SQuizListPage = ({ organizationId, studentId }) => {
                 <div className="flex flex-row p-2 w-10/12 items-center">
                   <p>Faculty: {quiz.facultyName}</p>
                   <p className="ml-5">Class: {quiz.className}</p>
-                  <p className="ml-5">Marks: {quiz.score}</p>
+                  <p className="ml-5">Marks: {quiz.score}/{totalMarks}</p>
                 </div>
               </div>
             </div>
