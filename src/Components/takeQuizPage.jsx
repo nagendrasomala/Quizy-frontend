@@ -247,11 +247,11 @@ const QuizPage = () => {
       );
 
       if (response.status === 200) {
+        localStorage.removeItem(`quizAnswers_${quizId}`);
         toast.success('Quiz submitted successfully!');
         if (document.fullscreenElement) {
             await document.exitFullscreen();
         }
-        localStorage.removeItem(`quizAnswers_${quizId}`);
         navigate('/quiz-completion', { replace: true });
       } else {
         toast.error('Failed to submit the quiz.');
