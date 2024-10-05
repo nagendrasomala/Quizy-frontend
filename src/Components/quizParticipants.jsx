@@ -147,7 +147,7 @@ const ParticipantsPage = () => {
                         </div>
                     </div>
 
-                    <table className="w-10/12 bg-white border border-gray-300">
+                    <table className="w-10/12 bg-white border border-gray-300 ">
                         <thead>
                             <tr>
                                 <th className="py-2 px-4 border-b text-center">RegNo</th>

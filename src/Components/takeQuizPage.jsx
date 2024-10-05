@@ -251,6 +251,7 @@ const QuizPage = () => {
         if (document.fullscreenElement) {
             await document.exitFullscreen();
         }
+        localStorage.removeItem(`quizAnswers_${quizId}`);
         navigate('/quiz-completion', { replace: true });
       } else {
         toast.error('Failed to submit the quiz.');
