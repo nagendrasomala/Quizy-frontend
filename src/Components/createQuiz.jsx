@@ -6,21 +6,14 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const QuizCreator = () => {
-    
   const location = useLocation();
   const [questions, setQuestions] = useState([]);
+  const [selectedQuestions, setSelectedQuestions] = useState([]); // State for selected questions
   const [quizTitle, setQuizTitle] = useState('');
   const [date, setDate] = useState('');
   const { classId } = location.state || {};
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-
-  // Function to convert local time to IST (UTC +5:30)
-  const toIST = (date) => {
-    const offsetIST = 5 * 60 + 30; // IST is UTC + 5 hours and 30 minutes
-    const istDate = new Date(date.getTime() + (offsetIST - date.getTimezoneOffset()) * 60 * 1000);
-    return istDate.toISOString().slice(0, 16); // Format in YYYY-MM-DDTHH:mm for input[type="datetime-local"]
-  };
 
   // Function to format time in HH:mm
   const formatTimeHHMM = (date) => {
@@ -43,7 +36,8 @@ const QuizCreator = () => {
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
       // Map the data to match your backend format
-      const formattedData = jsonData.map(item => ({
+      const formattedData = jsonData.map((item, index) => ({
+        id: index, // Adding an ID to each question for tracking
         question: item.question,
         opt1: item.opt1,
         opt2: item.opt2,
@@ -58,31 +52,48 @@ const QuizCreator = () => {
     reader.readAsBinaryString(file);
   };
 
+  // Toggle question selection
+  const toggleQuestionSelection = (questionId) => {
+    setSelectedQuestions((prevSelected) =>
+      prevSelected.includes(questionId)
+        ? prevSelected.filter((id) => id !== questionId) // Remove if already selected
+        : [...prevSelected, questionId] // Add if not selected
+    );
+  };
+
   // Handle quiz creation
   const handleQuizCreation = async () => {
     const token = localStorage.getItem('faculty_token');
-  
+
+    // Filter only the selected questions
+    const questionsToSend = questions.filter((q) => selectedQuestions.includes(q.id));
+
     try {
-      const response = await api.post('/faculty/create-quiz', { 
-        title: quizTitle, 
-        classId: classId,
-        startTime: formatTimeHHMM(new Date(startTime)), // Sending in HH:mm format
-        endTime: formatTimeHHMM(new Date(endTime)),     // Sending in HH:mm format
-        scheduledDate: date,
-        questions,
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, 
+      const response = await api.post(
+        '/faculty/create-quiz',
+        {
+          title: quizTitle,
+          classId: classId,
+          startTime: formatTimeHHMM(new Date(startTime)), // Sending in HH:mm format
+          endTime: formatTimeHHMM(new Date(endTime)), // Sending in HH:mm format
+          scheduledDate: date,
+          questions: questionsToSend, // Only the selected questions are sent to the backend
         },
-      });
-  
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       toast.success('Quiz created successfully!');
-      setQuestions([]); 
-      setQuizTitle(''); 
-      setDate(''); 
-      setStartTime(''); 
-      setEndTime(''); 
+      setQuestions([]);
+      setQuizTitle('');
+      setDate('');
+      setStartTime('');
+      setEndTime('');
+      setSelectedQuestions([]); // Clear selected questions after quiz creation
     } catch (error) {
       console.error('Error creating quiz:', error);
       toast.error('Error creating quiz. Please try again later.');
@@ -135,21 +146,29 @@ const QuizCreator = () => {
             accept=".xlsx, .xls"
             className="p-2 rounded-md bg-slate-100 shadow-md w-full"
           />
-          
-          <h2 className="text-2xl font-bold text-gray-700 mt-6">Questions Preview</h2>
 
-          {/* Render questions in card format */}
+          <div className="text-2xl flex flex-row justify-between font-bold text-gray-700 mt-6"><p>Questions Preview</p>   <p>Questions Count: {selectedQuestions.length}</p></div>
+
+          {/* Render questions with add/tick functionality */}
           <div className="grid grid-cols-1 gap-6">
-            {questions.map((q, index) => (
-              <div key={index} className="bg-gray-100 p-4 rounded-md shadow-md">
-                <h3 className="font-bold text-lg text-blue-600">Question {index + 1}: {q.question}</h3>
-                <ul className="mt-2">
-                  <li className="mt-1"><strong>1. </strong>{q.opt1}</li>
-                  <li className="mt-1"><strong>2. </strong>{q.opt2}</li>
-                  <li className="mt-1"><strong>3. </strong>{q.opt3}</li>
-                  <li className="mt-1"><strong>4. </strong>{q.opt4}</li>
-                </ul>
-                <p className="mt-2 text-green-600"><strong>Correct Answer: </strong>{q.correctAnswer}</p>
+            {questions.map((q) => (
+              <div key={q.id} className="bg-gray-100 p-4 rounded-md shadow-md flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-lg text-blue-600">Question: {q.question}</h3>
+                  <ul className="mt-2">
+                    <li className="mt-1"><strong>1. </strong>{q.opt1}</li>
+                    <li className="mt-1"><strong>2. </strong>{q.opt2}</li>
+                    <li className="mt-1"><strong>3. </strong>{q.opt3}</li>
+                    <li className="mt-1"><strong>4. </strong>{q.opt4}</li>
+                  </ul>
+                  <p className="mt-2 text-green-600"><strong>Correct Answer: </strong>{q.correctAnswer}</p>
+                </div>
+                <button
+                  onClick={() => toggleQuestionSelection(q.id)}
+                  className={`p-3 rounded-full ${selectedQuestions.includes(q.id) ? 'bg-green-500' : 'bg-gray-300'}`}
+                >
+                  {selectedQuestions.includes(q.id) ? '✔️' : 'Add'}
+                </button>
               </div>
             ))}
           </div>
