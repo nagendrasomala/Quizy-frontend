@@ -96,7 +96,7 @@ const QuizListPage = () => {
   };
 
   return (
-    <div className=''>
+    <div className='max-h-[calc(100vh-4rem)]'>
       <div className='flex flex-row justify-between items-center '>
         <h1 className="text-3xl font-bold text-blue-600">All Quizzes {classId}</h1>
         
@@ -117,9 +117,9 @@ const QuizListPage = () => {
         </div>
       </div>
 
-      <div className="flex flex-col mt-5 max-h-screen overflow-y-scroll">
+      <div className="flex flex-col mt-5 max-h-[calc(100vh-10rem)] overflow-y-scroll scrollbar-hide">
         {sortedQuizzes.map((quiz) => (
-          <div key={quiz.quizId} className="border rounded-md shadow flex flex-row mb-3 items-center w-9/12 p-2">
+          <div key={quiz.quizId} className="border rounded-md shadow flex flex-row mb-3 items-center w-8/12 p-2">
             <div className="flex flex-col w-10/12">
               <div className="flex flex-row p-2 w-10/12 items-center"> 
                 <p className="text-xl font-bold">{quiz.title}</p>

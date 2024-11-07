@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import api from '../assets/api';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button, Input } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CircularProgress from '@mui/material/CircularProgress'; // Import MUI CircularProgress for loader
@@ -133,7 +132,7 @@ const ClassesPage = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-row w-full min-h-screen">
+      <div className="flex flex-row w-full min-h-[calc(100vh-4rem)]">
         {/* Sidebar (Hamburger Menu) */}
         <div className={`bg-blue-400 p-4 text-white ${isOpen ? 'w-64' : 'w-16'} transition-all`}>
           <button className="focus:outline-none" onClick={() => setIsOpen(!isOpen)}>
@@ -172,7 +171,6 @@ const ClassesPage = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            {error && <div className="text-red-500">{error}</div>}
             <div className='flex flex-row'>
               <div className="flex justify-between mb-4">
                 <button
@@ -199,7 +197,7 @@ const ClassesPage = () => {
             </div>
           </div>
 
-          <ul>
+          <ul className='overflow-y-scroll scrollbar-hide max-h-[calc(100vh-10rem)]'>
             {filteredClasses.map((cla) => (
               <div
                 key={cla._id}
@@ -214,7 +212,7 @@ const ClassesPage = () => {
                     setDeleteClassId(cla._id);
                     setError(null);
                   }}
-                  className="text-blue-600 p-3 hover:bg-red-300 rounded-full h-full w-1/12 flex flex-col items-center"
+                  className="text-blue-600 p-4 mr-3 hover:bg-red-300 rounded-full h-full  flex flex-col items-center"
                 >
                   <DeleteIcon />
                 </button>
@@ -224,7 +222,7 @@ const ClassesPage = () => {
 
           {deleteClassId && (
             <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
-              <div className="bg-white p-4 rounded shadow-lg">
+              <div className="bg-white p-6 rounded shadow-lg">
                 <h2 className="text-lg font-bold">Confirm Delete</h2>
                 <p>Please type "DELETE" to confirm:</p>
                 <input
@@ -254,7 +252,7 @@ const ClassesPage = () => {
         </div>
       </div>
 
-      <ToastContainer position="top-center" />
+      <ToastContainer position="top-right" />
     </div>
   );
 };

@@ -35,8 +35,8 @@ const StudentDashboard = () => {
 
   // Function to handle logout
   const handleLogout = () => {
-    localStorage.removeItem('student_token'); // Remove the student token from local storage
-    navigate("/student-login"); // Redirect to the login page
+    localStorage.removeItem('student_token'); 
+    navigate("/student-login"); 
   };
 
   return (
@@ -47,7 +47,7 @@ const StudentDashboard = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-row w-full min-h-screen">
+      <div className="flex flex-row w-full min-h-[calc(100vh-4rem)]">
         {/* Sidebar (Hamburger Menu) */}
         <div className={`bg-blue-400 p-4 text-white ${isOpen ? 'w-64' : 'w-16'} transition-all`}>
           <button className="focus:outline-none text-xl" onClick={() => setIsOpen(!isOpen)}>

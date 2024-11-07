@@ -14,6 +14,7 @@ const QuizCreator = () => {
   const { classId } = location.state || {};
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
+  const [selectAll, setSelectAll] = useState(false); // State for select all checkbox
 
   // Function to format time in HH:mm
   const formatTimeHHMM = (date) => {
@@ -61,6 +62,17 @@ const QuizCreator = () => {
     );
   };
 
+  // Select or deselect all questions
+  const toggleSelectAll = () => {
+    if (selectAll) {
+      setSelectedQuestions([]); // Deselect all
+    } else {
+      const allQuestionIds = questions.map((q) => q.id);
+      setSelectedQuestions(allQuestionIds); // Select all
+    }
+    setSelectAll(!selectAll); // Toggle select all state
+  };
+
   // Handle quiz creation
   const handleQuizCreation = async () => {
     const token = localStorage.getItem('faculty_token');
@@ -93,15 +105,19 @@ const QuizCreator = () => {
       setDate('');
       setStartTime('');
       setEndTime('');
-      setSelectedQuestions([]); // Clear selected questions after quiz creation
-    } catch (error) {
+      setSelectedQuestions([]); 
+      setSelectAll(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
+      } catch (error) {
       console.error('Error creating quiz:', error);
       toast.error('Error creating quiz. Please try again later.');
     }
   };
 
   return (
-    <div className='flex-flex-col p-6'>
+    <div className='flex flex-col p-6'>
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl mx-auto mt-10">
         <h1 className="text-3xl font-bold text-blue-600 mb-4">Create a Quiz</h1>
         <div className="flex flex-col gap-4">
@@ -147,7 +163,22 @@ const QuizCreator = () => {
             className="p-2 rounded-md bg-slate-100 shadow-md w-full"
           />
 
-          <div className="text-2xl flex flex-row justify-between font-bold text-gray-700 mt-6"><p>Questions Preview</p>   <p>Questions Count: {selectedQuestions.length}</p></div>
+          <div className="lg:text-2xl flex flex-col justify-between font-bold text-gray-700 mt-6">
+            <p>Questions Preview</p>
+            <div className='flex flex-row justify-between mt-2'>
+            <div className="flex items-center">
+            <span className='lg:text-xl text-sm'>Select All</span>
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={toggleSelectAll}
+                className="ml-2 mt-1 lg:h-4 lg:w-4"
+              />
+              
+            </div>
+            <p className='lg:text-xl text-sm'>Questions Count: {selectedQuestions.length}</p>
+            </div>
+          </div>
 
           {/* Render questions with add/tick functionality */}
           <div className="grid grid-cols-1 gap-6">

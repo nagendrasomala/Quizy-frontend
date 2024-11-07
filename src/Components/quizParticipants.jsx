@@ -155,7 +155,7 @@ const ParticipantsPage = () => {
                                 <th className="py-2 px-4 border-b text-center">Marks</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className='overflow-y-scroll max-h-screen scrollbar-hide'>
                             {sortedParticipants.map((participant) => (
                                 <tr key={participant.regNo}>
                                     <td className="py-2 px-4 border-b text-center">{participant.regNo}</td>

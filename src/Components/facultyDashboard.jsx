@@ -55,7 +55,7 @@ const handleLogout = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-row w-full min-h-screen">
+      <div className="flex flex-row w-full min-h-[calc(100vh-4rem)]">
         {/* Sidebar (Hamburger Menu) */}
         <div className={`bg-blue-400 p-4 text-white ${isOpen ? 'w-64' : 'w-16'} transition-all`}>
           <button className="focus:outline-none text-xl" onClick={() => setIsOpen(!isOpen)}>

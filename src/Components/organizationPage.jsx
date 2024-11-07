@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import api from '../assets/api'; // Import your API module
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button, Input } from '@mui/material';
+import { Button,Tooltip } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify'; // Import Toastify components
 import 'react-toastify/dist/ReactToastify.css';
 import { FaUserGraduate } from "react-icons/fa";
@@ -16,11 +16,27 @@ const OrganizationPage = () => {
   const [error, setError] = useState(null);
   const [deleteOrgId, setDeleteOrgId] = useState(null);
   const [deleteConfirmationText, setDeleteConfirmationText] = useState('');
-  const [addStudentOrgId, setAddStudentOrgId] = useState(null); // For student form
-  const [addFacultyOrgId, setAddFacultyOrgId] = useState(null); // For faculty form
+  const [addStudentOrgId, setAddStudentOrgId] = useState(null); 
+  const [addFacultyOrgId, setAddFacultyOrgId] = useState(null);
+  const [OrgId, setOrgId] = useState(null);
   const [studentData, setStudentData] = useState({ regNo: '', name: '', email: '', password: '' });
   const [facultyData, setFacultyData] = useState({ regId: '', name: '', email: '', password: '' }); // Faculty form data
   const navigate = useNavigate(); 
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.shiftKey && event.key === 'S') {
+        setAddStudentOrgId(OrgId);
+      }
+      if (event.shiftKey && event.key === 'F') {
+        setAddFacultyOrgId(OrgId);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [OrgId]);
+
 
   useEffect(() => {
     const fetchOrganizations = async () => {
@@ -45,6 +61,11 @@ const OrganizationPage = () => {
 
     fetchOrganizations();
   }, []);
+
+  
+
+
+  
 
   const filteredOrganizations = organizations.filter(org =>
     org.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -116,7 +137,7 @@ const OrganizationPage = () => {
   if (loading) {
     return (
       <div className='flex h-screen w-full justify-center items-center'>
-        <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
+        <CircularProgress className='text-8xl' /> 
       </div>
     );
   }
@@ -144,33 +165,48 @@ const OrganizationPage = () => {
       </div>
 
       <ul>
-        {filteredOrganizations.map((org) => (
-          <div className='mb-3 flex flex-row w-8/12 h-12 bg-slate-100 rounded-md shadow-sm hover:bg-blue-300 cursor-pointer flex justify-between items-center' key={org._id}>
+        {filteredOrganizations.map((org) =>{
+          if (!OrgId) {
+            setOrgId(org._id);  
+          }        
+        
+          return(
+          <div className='mb-3 p-2 flex flex-row w-7/12  bg-white border rounded-md shadow-sm hover:bg-blue-300 cursor-pointer justify-between items-center' key={org._id}>
             <div
               className="w-full px-2"
               onClick={() => handleNavigate(org.name, org._id)}
             >
-              <div>{org.name} ({org.organizationId})</div>
+              <div>
+                <p>{org.name} ({org.organizationId})</p>
+                <p>Faculty Count: {org.faculties.length}</p>
+                <p>Students Count: {org.students.length}</p>
+                
+              </div>
             </div>
+            
             <div className="flex items-center ">
-              <Button
-                onClick={() => {
-                  setAddStudentOrgId(org._id);
-                  setError(null);
-                }}
-                className=" h-full w-8 hover:bg-blue-200"
-              >
-                <FaGraduationCap className='text-3xl' />
-              </Button>
-              <Button
-                onClick={() => {
-                  setAddFacultyOrgId(org._id);
-                  setError(null);
-                }}
-                className=" h-full w-7 hover:bg-blue-200"
-              >
-                <FaUserGraduate className='text-2xl'/>
-              </Button>
+              <Tooltip title="Add Student (Shift + S)">
+                <Button
+                  onClick={() => {
+                    setAddStudentOrgId(org._id);
+                    setError(null);
+                  }}
+                  className=" h-full w-8 hover:bg-blue-200"
+                >
+                  <FaGraduationCap className='text-3xl' />
+                </Button>
+              </Tooltip>
+              <Tooltip title="Add Faculty (Shift + F)">
+                <Button
+                  onClick={() => {
+                    setAddFacultyOrgId(org._id);
+                    setError(null);
+                  }}
+                  className=" h-full w-7 hover:bg-blue-200"
+                >
+                  <FaUserGraduate className='text-2xl'/>
+                </Button>
+              </Tooltip>
             
               <Button
                 onClick={() => {
@@ -183,7 +219,7 @@ const OrganizationPage = () => {
               </Button>
             </div>
           </div>
-        ))}
+        )})}
       </ul>
 
       {/* Delete Confirmation */}

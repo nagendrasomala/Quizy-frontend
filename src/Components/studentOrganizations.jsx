@@ -53,7 +53,7 @@ const SOrganizationsPage = () => {
         </div>
       ) : organization ? ( 
         <div
-          className="mb-3 px-3 mt-5 flex border flex-row w-6/12 h-12 bg-white rounded-md shadow-md hover:bg-blue-300 cursor-pointer justify-between items-center"
+          className="mb-3 px-3 mt-5 flex border flex-row lg:w-6/12 w-full h-12 bg-white rounded-md shadow-md hover:bg-blue-300 cursor-pointer justify-between items-center"
           onClick={() => handleNavigate(organization.name, organization._id)} // Use organization here
         >
           <div className="w-full px-2">

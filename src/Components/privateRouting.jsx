@@ -1,6 +1,38 @@
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
+import CircularProgress from '@mui/material/CircularProgress';
+
+
+//superAdmin Private Route
+const SuperAdminPrivateRoute = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+
+  useEffect(() => {
+    const super_admin_token = localStorage.getItem('super_admin_token');
+    if (!super_admin_token) {
+      setIsAuthenticated(false);
+      return;
+    }
+
+    axios.post('https://quiz-app-backend-kzc3.onrender.com/token/test-superadmin', {}, {
+    //axios.post('https://quiz-app-backend-kzc3.onrender.com/token/test-admin', {}, {
+      headers: { Authorization: `Bearer ${super_admin_token}` }
+    })
+      .then(() => setIsAuthenticated(true))
+      .catch(() => setIsAuthenticated(false));
+  }, []);
+
+  if (isAuthenticated === null) {
+    return(
+      <div className='flex h-screen w-full justify-center items-center'>
+          <CircularProgress className='text-8xl' /> 
+      </div>
+    );
+  }
+
+  return isAuthenticated ? children : <Navigate to="/superadmin-login" />;
+};
 
 // Admin Private Route
 const AdminPrivateRoute = ({ children }) => {
@@ -14,6 +46,7 @@ const AdminPrivateRoute = ({ children }) => {
     }
 
     axios.post('https://quiz-app-backend-kzc3.onrender.com/token/test-admin', {}, {
+    //axios.post('https://quiz-app-backend-kzc3.onrender.com/token/test-admin', {}, {
       headers: { Authorization: `Bearer ${admin_token}` }
     })
       .then(() => setIsAuthenticated(true))
@@ -21,7 +54,11 @@ const AdminPrivateRoute = ({ children }) => {
   }, []);
 
   if (isAuthenticated === null) {
-    return <div>Loading...</div>;
+    return(
+      <div className='flex h-screen w-full justify-center items-center'>
+          <CircularProgress className='text-8xl' /> 
+      </div>
+    );
   }
 
   return isAuthenticated ? children : <Navigate to="/" />;
@@ -46,7 +83,11 @@ const FacultyPrivateRoute = ({ children }) => {
   }, []);
 
   if (isAuthenticated === null) {
-    return <div>Loading...</div>;
+    return(
+      <div className='flex h-screen w-full justify-center items-center'>
+          <CircularProgress className='text-8xl' /> 
+      </div>
+    );
   }
 
   return isAuthenticated ? children : <Navigate to="/" />;
@@ -71,7 +112,11 @@ const StudentPrivateRoute = ({ children }) => {
   }, []);
 
   if (isAuthenticated === null) {
-    return <div>Loading...</div>;
+    return(
+      <div className='flex h-screen w-full justify-center items-center'>
+          <CircularProgress className='text-8xl' /> 
+      </div>
+    );
   }
 
   return isAuthenticated ? children : <Navigate to="/" />;
@@ -114,11 +159,15 @@ const PublicRoute = ({ children, role }) => {
   }, [role]);
 
   if (isAuthenticated === null) {
-    return <div>Loading...</div>;
+    return(
+      <div className='flex h-screen w-full justify-center items-center'>
+          <CircularProgress className='text-8xl' /> 
+      </div>
+    );
   }
 
   return !isAuthenticated ? children : <Navigate to={`/${role}-dashboard`} />;
 };
 
 
-export { AdminPrivateRoute, FacultyPrivateRoute, StudentPrivateRoute, PublicRoute };
+export {SuperAdminPrivateRoute, AdminPrivateRoute, FacultyPrivateRoute, StudentPrivateRoute, PublicRoute };

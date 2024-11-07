@@ -23,7 +23,7 @@ const StartPage = () => {
           <p className="text-gray-600 mb-4">Access your admin dashboard.</p>
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500"
-            onClick={() => handleLogin('admin')} // Call handleLogin on click
+            onClick={() => handleLogin('admin')} 
           >
             Login as Admin
           </button>

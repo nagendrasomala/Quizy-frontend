@@ -92,8 +92,8 @@ const StudentClassQuizListPage = () => {
     }
   };
   const handleLogout = () => {
-    localStorage.clear();
-    navigate("/student-login");
+    localStorage.removeItem('student_token'); 
+    navigate("/student-login"); 
   };
 
   const handleTakeQuiz = async (quizId, studentId) => {
@@ -142,7 +142,7 @@ const StudentClassQuizListPage = () => {
   if (loading) {
     return (
       <div className='flex h-screen w-full justify-center items-center'>
-        <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
+        <CircularProgress className='text-8xl' /> 
       </div>
     );
   }
@@ -155,7 +155,7 @@ const StudentClassQuizListPage = () => {
         <h1 className="text-3xl text-white flex justify-start ml-5">Quizy</h1>
       </div>
 
-      <div className="flex flex-row w-full min-h-screen">
+      <div className="flex flex-row w-full min-h-[calc(100vh-4rem)]">
         {/* Sidebar (Hamburger Menu) */}
         <div className={`bg-blue-400 p-4 text-white ${isOpen ? 'w-64' : 'w-16'} transition-all`}>
           <button className="focus:outline-none" onClick={() => setIsOpen(!isOpen)}>
@@ -193,7 +193,7 @@ const StudentClassQuizListPage = () => {
               </button>
             </div>
           </div>
-          <div className='overflow-y-scroll max-h-screen'>
+          <div className='overflow-y-scroll scrollbar-hide max-h-[calc(100vh-10rem)]'>
             {filteredQuizzes.length === 0 ? (
               <p>No quizzes available.</p>
             ) : (
@@ -224,7 +224,7 @@ const StudentClassQuizListPage = () => {
                           Take Quiz
                         </button>
                         <p className={color}>
-                          <AccessTimeIcon/> {status}
+                          <AccessTimeIcon fontSize='small'/> {status}
                         </p>
                       </div>
                     </div>

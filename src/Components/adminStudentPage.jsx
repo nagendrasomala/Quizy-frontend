@@ -3,14 +3,14 @@ import api from '../assets/api';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import CheckIcon from '@mui/icons-material/Check'; 
+import CheckIcon from '@mui/icons-material/Check';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
 const ManageStudentsPage = () => {
   const location = useLocation();
-  const {organizationId, classId } = location.state || {};
+  const { organizationId, classId } = location.state || {};
   const [classStudents, setClassStudents] = useState([]);
   const [orgStudents, setOrgStudents] = useState([]);
   const [searchClass, setSearchClass] = useState('');
@@ -19,15 +19,15 @@ const ManageStudentsPage = () => {
   const [error, setError] = useState(null);
   const [deleteConfirmationText, setDeleteConfirmationText] = useState('');
   const [deleteStudentId, setDeleteStudentId] = useState(null);
-  const [addedStudents, setAddedStudents] = useState([]); // New state to track added students
+  const [addedStudents, setAddedStudents] = useState([]);
   const navigate = useNavigate();
 
-    useEffect(() => {
-      const token = localStorage.getItem('admin_token'); 
-      if (!token) {
-          toast.error("Session expired");
-          navigate('/', { replace: true });
-      }
+  useEffect(() => {
+    const token = localStorage.getItem('admin_token');
+    if (!token) {
+      toast.error("Session expired");
+      navigate('/', { replace: true });
+    }
   }, [navigate]);
 
   // Fetch the class and organization students
@@ -35,12 +35,12 @@ const ManageStudentsPage = () => {
     const fetchStudents = async () => {
       try {
         const classResponse = await api.post('/student/class-students', {
-            classId,
-          }, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('admin_token')}`,
-            },
-          });
+          classId,
+        }, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('admin_token')}`,
+          },
+        });
         const orgResponse = await api.post('/student/organization/get-all', {
           organizationId,
         }, {
@@ -74,11 +74,14 @@ const ManageStudentsPage = () => {
         },
       });
 
+      // Update state directly without reloading
       setClassStudents((prevStudents) => [...prevStudents, response.data.student]);
+      setOrgStudents((prevOrgStudents) =>
+        prevOrgStudents.filter(student => student._id !== studentId) // Remove from orgStudents
+      );
       setAddedStudents((prevAdded) => [...prevAdded, studentId]); // Track the added student
       toast.success('Student added to class.');
-        window.location.reload();
-      
+
     } catch (error) {
       toast.error('Failed to add student to class. Please try again later.');
     }
@@ -89,7 +92,7 @@ const ManageStudentsPage = () => {
       setError('Please type "DELETE" to confirm.');
       return;
     }
-
+  
     try {
       await api.put('/student/remove-student-from-class', {
         classId,
@@ -99,11 +102,21 @@ const ManageStudentsPage = () => {
           Authorization: `Bearer ${localStorage.getItem('admin_token')}`,
         },
       });
-
+  
       setClassStudents((prevStudents) => prevStudents.filter(student => student._id !== studentId));
+      
+      const removedStudent = classStudents.find(student => student._id === studentId);
+      if (removedStudent) {
+        setOrgStudents((prevOrgStudents) => {
+          if (!prevOrgStudents.some(orgStudent => orgStudent._id === removedStudent._id)) {
+            return [...prevOrgStudents, removedStudent];
+          }
+          return prevOrgStudents;
+        });
+      }
+      
       setDeleteStudentId(null);
       setDeleteConfirmationText('');
-      window.location.reload();
       toast.success('Student removed from class.');
     } catch (error) {
       toast.error('Failed to remove student from class. Please try again later.');
@@ -112,15 +125,16 @@ const ManageStudentsPage = () => {
 
   const filteredClassStudents = classStudents.filter(student =>
     student.name.toLowerCase().includes(searchClass.toLowerCase()) ||
-    student.studentId.toLowerCase().includes(searchClass.toLowerCase())
+    student.regNo.toLowerCase().includes(searchClass.toLowerCase())
   );
 
   const filteredOrgStudents = orgStudents.filter(student =>
-    !classStudents.some(classStudent => classStudent._id === student._id) && 
-    !addedStudents.includes(student._id) &&
+    !classStudents.some(classStudent => classStudent._id === student._id) &&
     (student.name.toLowerCase().includes(searchOrg.toLowerCase()) ||
-     student.studentId.toLowerCase().includes(searchOrg.toLowerCase()))
+     student.regNo.toLowerCase().includes(searchOrg.toLowerCase())
+    )
   );
+  
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -130,11 +144,14 @@ const ManageStudentsPage = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-row w-full min-h-screen">
+      <div className="flex flex-row w-full min-h-[calc(100vh-4rem)]">
         
         {/* Sidebar */}
-        <div className="flex-1 m-4  shadow-md overflow-scroll max-h-screen p-2">
-          <h2 className="text-xl mb-2">Class Students</h2>
+        <div className="flex-1 m-4 shadow-md overflow-y-scroll scrollbar-hide max-h-screen p-2">
+        <div className='flex flex-row justify-between'>
+          <p className="text-xl mb-2">Class Students</p>
+          <p className="text-xl mb-2">Count : {filteredClassStudents.length}</p>
+          </div>
           <input
             type="text"
             placeholder="Search Class Students"
@@ -149,6 +166,7 @@ const ManageStudentsPage = () => {
                 className="mb-2 w-full bg-white border rounded-md shadow-sm p-2 px-3 flex justify-between items-center"
               >
                 <div>
+                  <p>RegNo: {student.regNo}</p>
                   <p>Name: {student.name}</p>
                   <p>ID: {student.studentId}</p>
                 </div>
@@ -166,8 +184,8 @@ const ManageStudentsPage = () => {
           </ul>
 
           {deleteStudentId && (
-            <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
-              <div className="bg-white p-4 rounded shadow-lg overflow-hidden">
+            <div className="fixed inset-0 flex z-50 items-center justify-center bg-gray-500 bg-opacity-50">
+              <div className="bg-white p-7 rounded-md shadow-lg overflow-hidden">
                 <h2 className="text-lg font-bold">Confirm Remove</h2>
                 <p>Please type "DELETE" to confirm:</p>
                 <input
@@ -196,10 +214,17 @@ const ManageStudentsPage = () => {
           )}
         </div>
         
-        <div className=' h-10 w-10  -ml-2  absolute top-1/2 left-1/2'><SwapHorizIcon className=' text-blue-500 text-6xl' /></div>
+        <div className='h-10 w-10 -ml-4 absolute top-1/2 left-1/2'>
+        <SwapHorizIcon className="text-blue-500" style={{ fontSize: '35px' }} />
+
+        </div>
+
         {/* Organization Students */}
-        <div className="flex-1 m-4 shadow-md overflow-scroll max-h-screen p-2">
-          <h2 className="text-xl mb-2">Organization Students</h2>
+        <div className="flex-1 m-4 shadow-md overflow-y-scroll scrollbar-hide max-h-screen p-2">
+          <div className='flex flex-row justify-between'>
+          <p className="text-xl mb-2">Organization Students</p>
+          <p className="text-xl mb-2">Count : {filteredOrgStudents.length}</p>
+          </div>
           <input
             type="text"
             placeholder="Search Organization Students"
@@ -214,25 +239,23 @@ const ManageStudentsPage = () => {
                 className="mb-2 w-full bg-white border rounded-md shadow-sm p-2 px-3 flex justify-between items-center"
               >
                 <div>
+                  <p>RegNo: {student.regNo}</p>
                   <p>Name: {student.name}</p>
                   <p>ID: {student.studentId}</p>
                 </div>
-                {addedStudents.includes(student._id) ? (
-                  <CheckIcon className="text-green-600" /> // Display tick icon if student is added
-                ) : (
-                  <button
-                    onClick={() => handleAddStudentToClass(student._id)}
-                    className="text-green-600 hover:bg-blue-200 h-full p-3 rounded-full"
-                  >
-                    <AddIcon />
-                  </button>
-                )}
+                <button
+                  onClick={() => handleAddStudentToClass(student._id)}
+                  className="text-green-600 hover:bg-green-300 h-full p-3 rounded-full"
+                >
+                  <AddIcon />
+                </button>
               </div>
             ))}
           </ul>
         </div>
       </div>
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+
+      <ToastContainer autoClose={1000} />
     </div>
   );
 };

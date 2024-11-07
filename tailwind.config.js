@@ -8,7 +8,18 @@ export default {
     extend: {},
   },
   plugins: [
-    
+    function ({ addUtilities }) {
+      addUtilities({
+        '.scrollbar-hide': {
+          /* Hides scrollbar in Firefox */
+          'scrollbar-width': 'none',
+          /* Hides scrollbar in WebKit browsers */
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+        },
+      });
+    },
   ],
 }
 

@@ -18,7 +18,9 @@ const QuizPage = () => {
   const [studentData, setStudentData] = useState({});
   const [facultyData, setFacultyData] = useState({});
   const [showTimeUpPopup, setShowTimeUpPopup] = useState(false); 
-  const [popupReason, setPopupReason] = useState(''); // 'time-up' or 'tab-switch'
+  const [popupReason, setPopupReason] = useState(''); 
+  const [questionsLength,setquestionsLength] = useState(0);
+  const [timeWarning,settimeWarning] = useState(1);
 
   const timerRef = useRef(null);
   const navigate = useNavigate();
@@ -78,6 +80,7 @@ const QuizPage = () => {
 
       const data = response.data;
       setQuizData(data.quiz);
+      setquestionsLength(data.quiz.questions.length);
       setStudentData(data.student);
       setFacultyData(data.quiz.faculty);
 
@@ -114,7 +117,7 @@ const QuizPage = () => {
     handleFullScreenPrompt();
     const storedAnswers = localStorage.getItem(`quizAnswers_${quizId}`);
     if (storedAnswers) {
-      setUserAnswers(JSON.parse(storedAnswers)); // Restore saved answers
+      setUserAnswers(JSON.parse(storedAnswers)); 
     }
     document.addEventListener('fullscreenchange', handleFullScreenExit);
     document.addEventListener('visibilitychange', handleTabSwitch);
@@ -170,24 +173,25 @@ const QuizPage = () => {
         ...prevAnswers,
         [questionIndex]: selectedOptionIndex,
       };
-      localStorage.setItem(`quizAnswers_${quizId}`, JSON.stringify(newAnswers)); // Store in localStorage
+      localStorage.setItem(`quizAnswers_${quizId}`, JSON.stringify(newAnswers)); 
       return newAnswers;
     });
   };
+  
 
-  const handleAutoSubmit = () => {
-    toast.error('Quiz auto-submitted due to tab switches or time running out.');
-    finishQuiz();
-  };
+
+  
+
+  
 
   const startTimer = (initialTime) => {
     setTimeLeft(initialTime);
-
     clearInterval(timerRef.current);
     
     timerRef.current = setInterval(() => {
-      setTimeLeft((prevTime) => {
+      setTimeLeft((prevTime) => {        
         if (prevTime <= 1000) {
+          setIsFullScreen(true);
           clearInterval(timerRef.current);
           setPopupReason('time-up');
           setShowTimeUpPopup(true); 
@@ -199,7 +203,7 @@ const QuizPage = () => {
   };
 
   const formatTime = (timeInMs) => {
-    if (timeInMs <= 0) return "0:00"; // Prevent showing negative time
+    if (timeInMs <= 0) return "0:00"; 
     const totalSeconds = Math.floor(timeInMs / 1000);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
@@ -235,9 +239,13 @@ const QuizPage = () => {
   const finishQuiz = async () => {
     try {
       const score = calculateScore();
+      const answers = Object.entries(userAnswers).map(([key, value]) => ({
+        [`${(parseInt(key) + 1).toString()}`]: value.toString() 
+      }));
+      console.log(answers);
       const response = await api.post(
-        '/quiz/submit-marks',
-        { quizId, score },
+        '/quiz/submit-quiz',
+        { quizId,answers, score },
         {
           headers: {
             Authorization: `Bearer ${studentToken}`,
@@ -268,10 +276,14 @@ const QuizPage = () => {
       finishQuiz(); 
     }
   };
+
   
 
+ 
+
+
   return (
-    <div className="relative min-h-screen bg-white">
+    <div className="relative max-h-screen bg-white scrollbar-hide">
       <div className="absolute inset-0 text-gray-900 text-4xl font-bold opacity-50 pointer-events-none">
         <div className="watermark">
           {[...Array(16)].map((_, i) => (
@@ -282,13 +294,13 @@ const QuizPage = () => {
         </div>
       </div>
 
-      <div className="flex flex-col h-screen">
+      <div className="flex flex-col max-h-screen ">
         {/* Navbar */}
-        <div className="flex items-center justify-between p-4 bg-blue-600 text-white">
+        <div className="flex top-0 sticky items-center justify-between p-3 bg-blue-600 text-white">
           <div className='flex flex-row gap-10 items-center'>
-            <h1 className="text-2xl">Name : {userName}</h1>
-            <p>Roll No: {regNo}</p>
-            <p>Faculty: {facultyData.name}</p>
+            <p className="text-md">Name : {userName}</p>
+            <p className="text-md">Roll No: {regNo}</p>
+            <p className="text-md">Faculty: {facultyData.name}</p>
           </div>
           <div className="text-lg">
             <span>Time Left: {formatTime(timeLeft)}</span>
@@ -300,9 +312,9 @@ const QuizPage = () => {
 
         <div className="flex flex-grow ">
           {/* Question List Sidebar */}
-          <div className="bg-blue-100 p-4 w-1/5 border-r border-gray-300 overflow-y-scroll max-h-screen ">
+          <div className="bg-blue-100 p-4 w-1/5 border-r border-gray-300 overflow-y-scroll scrollbar-hide h-screen ">
             <h3 className="text-xl text-blue-800 font-bold mb-4">Questions</h3>
-            <ul>
+            <ul className=''>
               {quizData.questions?.map((_, index) => (
                 <li
                   key={index}
@@ -311,7 +323,7 @@ const QuizPage = () => {
                     userAnswers[index]
                       ? 'bg-green-500 text-white'
                       : selectedQuestion === index
-                      ? 'bg-green-200'
+                      ? 'bg-green-300'
                       : 'bg-gray-300'
                   }`}
                 >
@@ -322,15 +334,15 @@ const QuizPage = () => {
           </div>
 
           {/* Question and Options */}
-          <div className="flex-1 p-8">
+          <div className="flex-1 p-8 max-h-screen overflow-y-scroll scrollbar-hide">
             {quizData.questions && quizData.questions[selectedQuestion] ? (
               <>
-                <h2 className="text-2xl mb-4">{quizData.questions[selectedQuestion]?.questionText}</h2>
+                <h2 className="text-2xl mb-4">{"Q"}{selectedQuestion+1}{")"}.  {quizData.questions[selectedQuestion]?.questionText}</h2>
                 <div className="flex flex-col gap-4">
                   {Object.values(quizData.questions[selectedQuestion]?.options).map((option, idx) => (
                     <button
                       key={idx}
-                      className={`p-4 rounded-lg border ${
+                      className={`p-4 rounded-lg px-6 flex border items-start ${
                         userAnswers[selectedQuestion] === idx + 1
                           ? 'bg-blue-500 text-white'
                           : 'bg-gray-100'
@@ -342,8 +354,23 @@ const QuizPage = () => {
                   ))}
                 </div>
 
-                {/* Previous and Next Buttons */}
-                <div className="flex justify-between mt-6">
+                
+              </>
+            ) : (
+              <div className='flex h-screen w-full justify-center items-center'>
+                <CircularProgress className='text-8xl' /> 
+              </div>
+            )}
+          </div>
+          
+        </div>
+        <div className='bottom-0 sticky w-full bg-white'>
+        
+            <div className='flex flex-row '>
+            <div className='flex flex-row justify-center items-center w-1/5 py-3 px-3'>
+              <p>Questions Answered : {Object.keys(userAnswers).length}/{questionsLength}</p>
+            </div>
+            <div className=" flex justify-between w-4/5 px-8 py-3">
                   <button
                     className="bg-gray-300 px-4 py-2 rounded"
                     onClick={handlePreviousQuestion}
@@ -354,20 +381,15 @@ const QuizPage = () => {
                   <button
                     className="bg-gray-300 px-4 py-2 rounded"
                     onClick={handleNextQuestion}
-                    disabled={selectedQuestion === quizData.questions.length - 1}
                   >
                     Next
                   </button>
                 </div>
-              </>
-            ) : (
-              <div className='flex h-screen w-full justify-center items-center'>
-                <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
-              </div>
-            )}
-          </div>
-        </div>
+                </div>
+                
       </div>
+      </div>
+      
       {!isFullScreen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg text-center">

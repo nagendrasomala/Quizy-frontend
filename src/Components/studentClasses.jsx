@@ -53,7 +53,7 @@ const StudentClassesPage = () => {
   if (loading) {
     return (
       <div className='flex h-screen w-full justify-center items-center'>
-        <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
+        <CircularProgress className='text-8xl' /> 
       </div>
     );
   }
@@ -65,7 +65,7 @@ const StudentClassesPage = () => {
         <h1 className="text-3xl text-white flex justify-start ml-5">Quizy</h1>
       </div>
 
-      <div className="flex flex-row w-full min-h-screen">
+      <div className="flex flex-row w-full min-h-[calc(100vh-4rem)]">
         {/* Sidebar (Hamburger Menu) */}
         <div className={`bg-blue-400 p-4 text-white ${isOpen ? 'w-64' : 'w-16'} transition-all`}>
           <button className="focus:outline-none" onClick={() => setIsOpen(!isOpen)}>
@@ -96,12 +96,12 @@ const StudentClassesPage = () => {
             />
           </div>
 
-          <ul>
+          <ul className='overflow-y-scroll scrollbar-hide max-h-[calc(100vh-10rem)]'>
             {filteredClasses.map((cls) => (
               <div
                 key={cls._id}
                 onClick={() => handleNavigate(cls._id)}
-                className="mb-2 w-6/12 h-auto bg-white border rounded-md shadow-md hover:bg-blue-300 p-2 px-3 cursor-pointer"
+                className="mb-3 w-6/12 h-auto bg-white border rounded-md shadow-md hover:bg-blue-300 p-2 px-3 cursor-pointer"
               >
                 <div>
                   <p>Class Name: {cls.name}</p>
@@ -112,7 +112,7 @@ const StudentClassesPage = () => {
           </ul>
           {isButtonLoading && (
             <div className='flex h-screen w-full justify-center items-center'>
-            <CircularProgress className='text-8xl' /> {/* Show loader while data is loading */}
+            <CircularProgress className='text-8xl' /> 
           </div>
           )}
         </div>

@@ -2,13 +2,13 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%; /* Full width to allow for multiple columns */
+    width: 100%; 
     height: 100%;
     overflow: hidden;
     display: flex;
-    flex-wrap: wrap; /* Allow wrapping to multiple rows */
-    justify-content: space-around; /* Space elements evenly */
-    align-content: space-between; /* Align columns with even spacing */
+    flex-wrap: wrap; 
+    justify-content: space-around; 
+    align-content: space-between; 
   }
   
   .watermark-text {
