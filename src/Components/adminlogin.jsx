@@ -5,6 +5,7 @@ import api from "../assets/api";
 const AdminLogin = () => {
   const [adminId, setAdminId] = useState("");
   const [secret, setSecret] = useState("");
+  const [password, setPassword] = useState(""); // State for password input
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -12,7 +13,7 @@ const AdminLogin = () => {
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
     if (token) {
-      navigate("/admin-dashboard"); // Redirect to admin dashboard
+      navigate("/admin-dashboard"); 
     }
   }, [navigate]);
 
@@ -24,6 +25,7 @@ const AdminLogin = () => {
       const response = await api.post("/auth/admin/login", {
         adminId,
         secret,
+        password, 
       });
 
       if (response.status === 200) {
@@ -80,6 +82,22 @@ const AdminLogin = () => {
                 placeholder="Enter your key ID"
                 value={secret}
                 onChange={(e) => setSecret(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Password Field */}
+            <div className="mb-4">
+              <label className="block text-sm font-semibold text-blue-600 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password" // Name attribute set to "password"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>

@@ -14,6 +14,15 @@ const StudentQuizResultPage = ({ quizId }) => {
   const [loading, setLoading] = useState(true);
   const [selectedAnalysisSection, setSelectedAnalysisSection] = useState('bestPerformingTopics'); 
   const hasFetchedAnalysis = useRef(false); 
+  const attemptedQuestions = questions.filter(
+    (question) => question.optedAnswer !== undefined
+  ).length;
+  const correctlyAttempted = questions.filter(
+    (question) =>
+      question.optedAnswer !== undefined &&
+      question.optedAnswer === question.correctAnswer
+  ).length;
+  const wronglyAttempted = attemptedQuestions - correctlyAttempted;
 
   useEffect(() => {
     const fetchQuizData = async () => {
@@ -30,6 +39,7 @@ const StudentQuizResultPage = ({ quizId }) => {
         );
 
         setQuestions(response.data.questions);
+        console.log(response.data.questions)
         setLoading(false);
       } catch (error) {
         console.error('Error fetching quiz data:', error);
@@ -52,7 +62,7 @@ const StudentQuizResultPage = ({ quizId }) => {
 
       try {
         const response = await axios.post(
-          'http://localhost:4500/analyze-questions',
+          'https://gemini-backend-6193.onrender.com/analyze-questions',
           { questions },
           {
             headers: {
@@ -143,45 +153,73 @@ const StudentQuizResultPage = ({ quizId }) => {
       </div>
 
       {selectedSection === 'overview' && (
-        <div className="mt-4 p-4 rounded-md max-h-[calc(100vh-11rem)] overflow-y-scroll scrollbar-hide">
-          {questions.map((question, index) => {
-            const optionsArray = Object.values(question.options); 
-            return (
-              <div key={index} className="p-4 w-9/12 mb-5 shadow-sm border rounded-md">
-                <p className="font-semibold">{`Q${index + 1}: ${question.questionText}`}</p>
-                <div className="mt-2">
-                  {optionsArray.map((option, i) => {
-                    const isCorrect = option === question.correctAnswer;
-                    const isSelected = option === question.optedAnswer;
-                    return (
-                      <div
-                        key={i}
-                        className={`p-2 mb-3 rounded-md ${
-                          isCorrect
-                            ? 'bg-green-200 text-green-700'
-                            : isSelected && !isCorrect
-                            ? 'bg-red-200 text-red-700'
-                            : 'bg-gray-100'
-                        }`}
-                      >
-                        {option}
-                        {isCorrect && <CheckCircleIcon className="ml-2" />}
-                        {isSelected && !isCorrect && <CancelIcon className="ml-2" />}
-                      </div>
-                    );
-                  })}
-                </div>
+          <div className="mt-4 lg:p-4 rounded-md max-h-[calc(100vh-11rem)] overflow-y-scroll scrollbar-hide">
+            <div className="flex flex-col p-4 w-full lg:w-9/12 mb-5 shadow-sm border rounded-md">
+              <h1 className="text-2xl font-bold text-blue-600 mb-4">Quiz Summary</h1>
+              <div className="flex flex-col gap-2 lg:flex-row justify-between px-2 text-md text-black">
+                <p className="border rounded-xl shadow-sm p-1 px-3 font-serif">Total Questions: {questions.length}</p>
+                <p className="border rounded-xl shadow-sm p-1 px-3 font-serif">Attempted Questions: {attemptedQuestions}</p>
+                <p className="border rounded-xl shadow-sm p-1 px-3 font-serif">Correctly Attempted: {correctlyAttempted}</p>
+                <p className="border rounded-xl shadow-sm p-1 px-3 font-serif">Wrongly Attempted: {wronglyAttempted}</p>
               </div>
-            );
-          })}
-        </div>
-      )}
+            </div>
+            {questions.map((question, index) => {
+              const optionsArray = Object.values(question.options); 
+              const isAttempted = question.optedAnswer !== undefined;
+              const isCorrect = isAttempted && question.optedAnswer === question.correctAnswer;
+
+              return (
+                <div key={index} className="p-4 w-full lg:w-9/12 mb-5 shadow-sm border rounded-md">
+                  <p className="font-semibold">{`Q${index + 1}: ${question.questionText}`}</p>
+                  <div className="mt-2">
+                    {optionsArray.map((option, i) => {
+                      const isOptionCorrect = option === question.correctAnswer;
+                      const isOptionSelected = option === question.optedAnswer;
+                      return (
+                        <div
+                          key={i}
+                          className={`p-2 mb-3 rounded-md ${
+                            isOptionCorrect
+                              ? 'bg-green-200 text-green-700'
+                              : isOptionSelected && !isOptionCorrect
+                              ? 'bg-red-200 text-red-700'
+                              : 'bg-gray-100'
+                          }`}
+                        >
+                          {option}
+                          {isOptionCorrect && <CheckCircleIcon className="ml-2" />}
+                          {isOptionSelected && !isOptionCorrect && <CancelIcon className="ml-2" />}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p
+                    className={`mt-3 px-1 font-semibold ${
+                      isCorrect
+                        ? 'text-green-600'
+                        : !isAttempted
+                        ? 'text-gray-500'
+                        : 'text-red-600'
+                    }`}
+                  >
+                    {isCorrect
+                      ? 'Correctly Answered'
+                      : !isAttempted
+                      ? 'Not Answered'
+                      : 'Wrongly Answered'}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
 
       {selectedSection === 'analysis' && analysisData && (
-        <div className="mt-4 p-4 w-11/12 border rounded-md">
+        <div className="mt-4 p-4 w-full lg:w-11/12 border rounded-md">
           <h2 className="font-bold text-lg">Overall Accuracy: {analysisData.overallAccuracy}</h2>
 
-          <div className='flex flex-row justify-between mt-4 mb-4'>
+          <div className='flex flex-col gap-2 lg:flex-row justify-between mt-4 mb-4'>
             {['bestPerformingTopics', 'improvementNeededTopics', 'strengths', 'areasOfAppreciation', 'furtherRecommendations'].map((section) => (
               <div key={section}>
                 <h3 

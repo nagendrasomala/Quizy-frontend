@@ -15,8 +15,8 @@ const SuperAdminPrivateRoute = ({ children }) => {
       return;
     }
 
-    axios.post('https://quiz-app-backend-kzc3.onrender.com/token/test-superadmin', {}, {
-    //axios.post('https://quiz-app-backend-kzc3.onrender.com/token/test-admin', {}, {
+    //axios.post('http://localhost:7080/token/test-superadmin', {}, {
+    axios.post('https://quiz-app-backend-kzc3.onrender.com/token/test-admin', {}, {
       headers: { Authorization: `Bearer ${super_admin_token}` }
     })
       .then(() => setIsAuthenticated(true))
@@ -45,8 +45,8 @@ const AdminPrivateRoute = ({ children }) => {
       return;
     }
 
+    //axios.post('http://localhost:7080/token/test-admin', {}, {
     axios.post('https://quiz-app-backend-kzc3.onrender.com/token/test-admin', {}, {
-    //axios.post('https://quiz-app-backend-kzc3.onrender.com/token/test-admin', {}, {
       headers: { Authorization: `Bearer ${admin_token}` }
     })
       .then(() => setIsAuthenticated(true))
@@ -151,7 +151,7 @@ const PublicRoute = ({ children, role }) => {
       return;
     }
 
-    axios.post(`https://quiz-app-backend-kzc3.onrender.com/token/test-${role}`, {}, {
+    axios.post(`http://localhost:7080/token/test-${role}`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(() => setIsAuthenticated(true))

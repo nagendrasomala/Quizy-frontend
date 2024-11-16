@@ -99,17 +99,17 @@ const SQuizListPage = ({ organizationId, studentId }) => {
                   className="border rounded-md shadow-sm bg-white flex flex-col lg:flex-row mb-3 items-center w-full lg:w-7/12 p-2"
                 >
                   <div className="flex flex-col w-10/12">
-                    <div className="flex flex-row p-2 w-10/12 items-center">
+                    <div className="flex flex-col lg:flex-row p-2 w-10/12 items-center">
                       <p className="text-xl font-bold">{quiz.title}</p>
                       <p className="ml-5">Code: {quiz.quizId}</p>
                     </div>
-                    <div className="flex flex-row p-2 w-10/12 items-center">
+                    <div className="flex flex-col lg:flex-row p-2 w-10/12 items-center">
                       <p>Faculty: {quiz.facultyName}</p>
                       <p className="ml-5">Class: {quiz.className}</p>
                       <p className="ml-5">Marks: {quiz.score}/{quiz.totalMarks}</p>
                     </div>
                   </div>
-                  <div className="flex flex-col lg:items-end w-2/12">
+                  <div className="flex flex-col lg:items-end w-1/3 lg:w-2/12">
                     <button
                       onClick={() => handleReportClick(quiz)}
                       className="p-2 bg-blue-500 text-white rounded-md shadow-md mt-2 lg:mt-0"

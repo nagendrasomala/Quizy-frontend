@@ -202,7 +202,7 @@ const StudentClassQuizListPage = () => {
                   const { status, color } = getQuizStatus(quiz.scheduledDate, quiz.startTime, quiz.endTime);
 
                   return (
-                    <div key={quiz._id} className="mt-3 mb-2 w-7/12 h-auto flex flex-row bg-white border rounded-md shadow-md px-2 hover:bg-blue-300 cursor-pointer">
+                    <div key={quiz._id} className="mt-3 mb-2 w-full lg:w-7/12 h-auto flex flex-row bg-white border rounded-md shadow-md px-2 hover:bg-blue-300 cursor-pointer">
                       <div className="flex justify-between items-center w-10/12 p-2">
                         <div>
                           <div className="flex flex-row items-center">

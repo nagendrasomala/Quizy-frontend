@@ -101,7 +101,7 @@ const StudentClassesPage = () => {
               <div
                 key={cls._id}
                 onClick={() => handleNavigate(cls._id)}
-                className="mb-3 w-6/12 h-auto bg-white border rounded-md shadow-md hover:bg-blue-300 p-2 px-3 cursor-pointer"
+                className="mb-3 w-full lg:w-6/12 h-auto bg-white border rounded-md shadow-md hover:bg-blue-300 p-2 px-3 cursor-pointer"
               >
                 <div>
                   <p>Class Name: {cls.name}</p>
