@@ -39,7 +39,6 @@ const StudentQuizResultPage = ({ quizId }) => {
         );
 
         setQuestions(response.data.questions);
-        console.log(response.data.questions)
         setLoading(false);
       } catch (error) {
         console.error('Error fetching quiz data:', error);
